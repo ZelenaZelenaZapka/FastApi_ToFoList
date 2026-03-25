@@ -444,3 +444,382 @@ body {
         justify-content: center;
     }
 }
+
+/* 🎬 Проста анімація появи */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 🧱 Стиль картки задачі (базовий) */
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.task-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.task-title {
+    font-weight: 500;
+    color: #222;
+}
+
+.task-time {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    font-size: 1.3em;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.delete-btn:hover { opacity: 1; }
+
+/* 🎯 Модальне вікно - центровка */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* 🎯 Центруємо контейнер з задачами */
+.tasks-container {
+    max-width: 600px;           /* не на всю ширину */
+    margin: 0 auto;             /* по центру */
+    padding: 10px;
+}
+
+/* 🧱 Картка задачі - покращений дизайн */
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+    border-left: 4px solid #4CAF50;  /* зелений акцент зліва */
+}
+
+.task-item:hover {
+    transform: translateY(-2px);  /* легкий підйом при наведенні */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+/* ✅ Стиль для виконаної задачі */
+.task-item.completed {
+    border-left-color: #ccc;
+    background: #fafafa;
+    opacity: 0.85;
+}
+
+/* 📝 Заголовок задачі з анімацією закреслення */
+.task-title {
+    font-weight: 500;
+    color: #222;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Закреслення для виконаної задачі */
+.task-item.completed .task-title {
+    text-decoration: none;  /* вимикаємо стандартне */
+    color: #888;
+}
+
+.task-item.completed .task-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: #aaa;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: strike 0.3s ease forwards;
+}
+
+/* 🎬 Анімація "проведення лінії" */
+@keyframes strike {
+    to { transform: scaleX(1); }
+}
+
+/* 🕒 Час створення */
+.task-time {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 2px;
+}
+
+/* 🔘 Кнопки дій */
+.task-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.action-form {
+    margin: 0;
+    padding: 0;
+}
+
+.complete-btn,
+.delete-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    font-size: 1.1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.complete-btn:hover {
+    background: #4CAF50;
+    color: white;
+    transform: scale(1.05);
+}
+
+.delete-btn:hover {
+    background: #f44336;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* 🎬 Анімація появи задачі */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(15px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.35s ease-out;
+}
+
+/* 📱 Адаптивність для мобільних */
+@media (max-width: 480px) {
+    .tasks-container {
+        padding: 5px;
+    }
+    .task-item {
+        padding: 14px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .task-actions {
+        align-self: flex-end;
+    }
+}
+
+.content-header {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-task-btn {
+    padding: 10px 18px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.add-task-btn:hover {
+    background: #45a049;
+}
+
+/* 📦 Контейнер задач — центровано */
+.tasks-container {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* 🧱 Картка задачі */
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    background: #1a1d23;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #2a2f3a;
+    transition: all 0.25s ease;
+}
+
+.task-item:hover {
+    border-color: #3a4050;
+    transform: translateX(4px);
+}
+
+/* ✅ Виконана задача */
+.task-item.completed {
+    opacity: 0.7;
+    background: #15181e;
+}
+
+/* 🔲 Чекбокс кнопка */
+.task-form {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.checkbox-btn:hover {
+    transform: scale(1.1);
+}
+
+.checkbox-empty {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4a5060;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.checkbox-btn:hover .checkbox-empty {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+/* 📝 Текст задачі */
+.task-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-title {
+    display: block;
+    font-weight: 500;
+    color: #e0e0e0;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+/* Закреслення тексту */
+.task-title.strikethrough {
+    text-decoration: line-through;
+    color: #6a7080;
+}
+
+.task-time {
+    display: block;
+    font-size: 12px;
+    color: #6a7080;
+    margin-top: 3px;
+}
+
+/* 🗑️ Кнопка видалення */
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    background: rgba(244, 67, 54, 0.1);
+    transform: scale(1.05);
+}
+
+/* 🎬 Анімація появи */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 📱 Адаптивність */
+@media (max-width: 600px) {
+    .tasks-container {
+        padding: 5px;
+    }
+    .task-item {
+        padding: 14px 16px;
+    }
+}

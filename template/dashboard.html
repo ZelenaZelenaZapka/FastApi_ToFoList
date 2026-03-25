@@ -53,12 +53,47 @@
             </header>
 
             <div class="tasks-container" id="tasksContainer">
-                <!-- Сюди JavaScript буде додавати задачі -->
-                <div class="loading-state">
-                    <p>Завантаження...</p>
-                </div>
+                {% if tasks %}
+                    {% for task in tasks %}
+                        <div class="task-item animate-fade-in {% if task.completed %}completed{% endif %}">
+                            <!-- Чекбокс для завершення -->
+                            <form action="/toggle-task/{{ task.id }}" method="post" class="task-form">
+                                <button type="submit" class="checkbox-btn {% if task.completed %}checked{% endif %}" title="Завершити">
+                                    {% if task.completed %}
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect width="16" height="16" rx="4" fill="#4CAF50"/>
+                                            <path d="M4 8L7 11L12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    {% else %}
+                                        <div class="checkbox-empty"></div>
+                                    {% endif %}
+                                </button>
+                            </form>
+                            
+                            <!-- Текст задачі -->
+                            <div class="task-content">
+                                <span class="task-title {% if task.completed %}strikethrough{% endif %}">{{ task.title }}</span>
+                                <span class="task-time">{{ task.created_at }}</span>
+                            </div>
+                            
+                            <!-- Кнопка видалення -->
+                            <form action="/delete-task/{{ task.id }}" method="post" class="task-form">
+                                <button type="submit" class="delete-btn" title="Видалити">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <path d="M3 4.5H15M13.5 4.5L12.75 15.75C12.7033 16.2933 12.4767 16.8067 12.1067 17.2067C11.7367 17.6067 11.2433 17.8633 10.6267 17.9767L10.5 18H7.5C6.88333 17.9767 6.36333 17.7633 5.94 17.36C5.51667 16.9567 5.26667 16.4433 5.19 15.82L4.5 4.5M7.5 4.5V3C7.5 2.60218 7.65804 2.22064 7.93934 1.93934C8.22064 1.65804 8.60218 1.5 9 1.5H9C9.39782 1.5 9.77936 1.65804 10.0607 1.93934C10.342 2.22064 10.5 2.60218 10.5 3V4.5H7.5Z" stroke="#f44336" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="display: flex;">
+                        <div class="empty-icon">🎉</div>
+                        <h3>Все готово!</h3>
+                        <p>У вас немає завдань</p>
+                    </div>
+                {% endif %}
             </div>
-
             <div class="empty-state" id="emptyState" style="display: none;">
                 <div class="empty-icon">🎉</div>
                 <h3>Все готово!</h3>
@@ -74,20 +109,37 @@
                 <h3>Нова задача</h3>
                 <button class="modal-close" id="modalClose">&times;</button>
             </div>
-            <form id="addTaskForm">
+            <!-- Проста форма, яка відправляє дані на сервер -->
+            <form action="/add-task" method="post">
                 <div class="form-group">
                     <label for="taskTitle">Назва задачі</label>
-                    <input type="text" id="taskTitle" placeholder="Що потрібно зробити?" required>
+                    <input type="text" id="taskTitle" name="title" placeholder="Що потрібно зробити?" required>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="cancel-btn" id="modalCancel">Скасувати</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Скасувати</button>
                     <button type="submit" class="submit-btn">Зберегти</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src=""></script>
+    <script>
+        // Тільки відкриття/закриття модального вікна
+        const modal = document.getElementById("modalOverlay");
+        
+        document.getElementById("addTaskBtn").onclick = () => modal.style.display = "flex";
+        
+        function closeModal() {
+            modal.style.display = "none";
+            document.getElementById("taskTitle").value = "";
+        }
+        
+        document.getElementById("modalClose").onclick = closeModal;
+        document.getElementById("modalCancel").onclick = closeModal;
+        
+        // Закриття по кліку поза вікном
+        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+    </script>
 </body>
 </html>
 
