@@ -127,3 +127,34 @@ body {
     text-align: center;
     min-height: 20px;
 }
+
+/* 🔁 Перемикач вхід/реєстрація */
+.toggle-auth {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #2a2f3a;
+    font-size: 14px;
+    color: #888;
+}
+
+.toggle-link {
+    background: none;
+    border: none;
+    color: #4CAF50;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 5px;
+    text-decoration: none;
+}
+
+.toggle-link:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 13px;
+    margin-top: 8px;
+    text-align: center;
+}

@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вхід | To-Do List</title>
-    <!-- Підключаємо наш стиль -->
     <link rel="stylesheet" href="/static/css/login.css">
-    <!-- Шрифт (опціонально, для краси) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -14,31 +12,100 @@
     <div class="login-wrapper">
         <div class="login-card">
             <div class="login-header">
-                <h1>З поверненням!</h1>
-                <p>Будь ласка, введіть дані для входу</p>
+                <h1 id="formTitle">З поверненням!</h1>
+                <p id="formDesc">Будь ласка, введіть дані для входу</p>
             </div>
 
-            <form id="loginForm" class="login-form">
+            <!-- 🔐 Форма входу -->
+            <form id="loginForm" class="login-form" action="/login" method="post">
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="name@example.com" required>
                 </div>
-
                 <div class="form-group">
                     <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required minlength="6">
                 </div>
-
                 <div class="form-actions">
                     <button type="submit" id="submitBtn">Увійти</button>
                 </div>
-                
-                <p id="errorMessage" class="error-message"></p>
+                {% if error %}
+                <p class="error-message">{{ error }}</p>
+                {% endif %}
             </form>
+
+            <!-- 📝 Форма реєстрації (прихована) -->
+            <form id="registerForm" class="login-form" action="/register" method="post" style="display:none;">
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" name="email" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" name="password" placeholder="Мінімум 6 символів" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword2">Повторіть пароль</label>
+                    <!-- ✅ ДОДАНО: name="password2" -- це ключове виправлення! -->
+                    <input type="password" 
+                           id="regPassword2" 
+                           name="password2"
+                           placeholder="••••••••" 
+                           required 
+                           minlength="6">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="regSubmitBtn">Зареєструватися</button>
+                </div>
+                <p class="error-message" id="regError"></p>
+            </form>
+
+            <!-- 🔁 Перемикач -->
+            <div class="toggle-auth">
+                <span id="toggleText">Немає акаунту?</span>
+                <button type="button" id="toggleBtn" class="toggle-link">Зареєструватися</button>
+            </div>
         </div>
     </div>
 
-    <!-- Підключаємо скрипт -->
-    <!-- <script src="/static/js/login.js"></script> -->
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+        const toggleBtn = document.getElementById("toggleBtn");
+        const toggleText = document.getElementById("toggleText");
+        const formTitle = document.getElementById("formTitle");
+        const formDesc = document.getElementById("formDesc");
+        
+        let isLogin = true;
+        
+        toggleBtn.addEventListener("click", () => {
+            isLogin = !isLogin;
+            if (isLogin) {
+                loginForm.style.display = "block";
+                registerForm.style.display = "none";
+                formTitle.textContent = "З поверненням!";
+                formDesc.textContent = "Будь ласка, введіть дані для входу";
+                toggleText.textContent = "Немає акаунту?";
+                toggleBtn.textContent = "Зареєструватися";
+            } else {
+                loginForm.style.display = "none";
+                registerForm.style.display = "block";
+                formTitle.textContent = "Створити акаунт";
+                formDesc.textContent = "Заповніть форму для реєстрації";
+                toggleText.textContent = "Вже маєте акаунт?";
+                toggleBtn.textContent = "Увійти";
+            }
+        });
+        
+        // Перевірка співпадіння паролів при реєстрації (дублювання для надійності)
+        registerForm.addEventListener("submit", (e) => {
+            const p1 = document.getElementById("regPassword").value;
+            const p2 = document.getElementById("regPassword2").value;
+            if (p1 !== p2) {
+                e.preventDefault();
+                document.getElementById("regError").textContent = "Паролі не співпадають";
+            }
+        });
+    </script>
 </body>
-</html>
+</html> 

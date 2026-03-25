@@ -823,3 +823,82 @@ body {
         padding: 14px 16px;
     }
 }
+
+/* 📅 Групування по датах (для історії) */
+.date-group {
+    margin-bottom: 20px;
+}
+
+.date-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2f3a;
+}
+
+.date-badge {
+    background: #3a4050;
+    color: #ccc;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* 🗑️ Стиль для задач в історії */
+.task-item.archived {
+    background: #15181e;
+    border-left: 4px solid #666;
+    opacity: 0.7;
+}
+
+.task-item.archived .task-title {
+    color: #6a7080;
+}
+
+/* ✅ Закреслення тексту */
+.strikethrough {
+    text-decoration: line-through;
+    color: #6a7080;
+}
+
+/* 🎯 Підсвітка активної вкладки */
+.nav-btn.active {
+    background: #2a2f3a;
+    border-left: 3px solid #4CAF50;
+}
+
+/* 🔘 Кнопка видалити */
+.delete-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 1.2em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    background: rgba(244, 67, 54, 0.15);
+    transform: scale(1.1);
+}
+
+/*  Контейнер дій */
+.task-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.task-form {
+    margin: 0;
+    padding: 0;
+}   
