@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мої завдання | To-Do List</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Сайдбар (бічна панель) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">📋 TodoApp</h1>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="tasks">
+                    <span class="icon">📝</span>
+                    <span>Мої справи</span>
+                </button>
+                <button class="nav-btn" data-tab="history">
+                    <span class="icon">🕒</span>
+                    <span>Історія</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">User</span>
+                        <span class="user-email" id="userEmail">user@example.com</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <span class="icon">🚪</span>
+                    <span>Вийти</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Основний контент -->
+        <main class="main-content">
+            <header class="content-header">
+                <h2 id="pageTitle">Активні завдання</h2>
+                <button class="add-task-btn" id="addTaskBtn">
+                    <span class="icon">+</span>
+                    <span>Додати справу</span>
+                </button>
+            </header>
+
+            <div class="tasks-container" id="tasksContainer">
+                <!-- Сюди JavaScript буде додавати задачі -->
+                <div class="loading-state">
+                    <p>Завантаження...</p>
+                </div>
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">🎉</div>
+                <h3>Все готово!</h3>
+                <p>У вас немає завдань у цій категорії</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальне вікно для додавання задачі -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Нова задача</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="addTaskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Назва задачі</label>
+                    <input type="text" id="taskTitle" placeholder="Що потрібно зробити?" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="modalCancel">Скасувати</button>
+                    <button type="submit" class="submit-btn">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src=""></script>
+</body>
+</html>
+
+
