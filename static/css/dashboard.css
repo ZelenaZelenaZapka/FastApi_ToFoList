@@ -1,4 +1,4 @@
-/* --- Змінні (ті самі що й у login.css для консистентності) --- */
+/* --- Змінні --- */
 :root {
     --primary-color: #4f46e5;
     --primary-hover: #4338ca;
@@ -74,6 +74,7 @@ body {
     color: var(--text-secondary);
     transition: all 0.2s;
     text-align: left;
+    text-decoration: none;
 }
 
 .nav-btn:hover {
@@ -84,10 +85,6 @@ body {
 .nav-btn.active {
     background: var(--primary-color);
     color: white;
-}
-
-.nav-btn .icon {
-    font-size: 18px;
 }
 
 .sidebar-footer {
@@ -146,6 +143,7 @@ body {
     cursor: pointer;
     font-size: 15px;
     transition: background 0.2s;
+    text-decoration: none;
 }
 
 .logout-btn:hover {
@@ -164,6 +162,9 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .content-header h2 {
@@ -195,214 +196,229 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 10px;
 }
 
-.task-card {
-    background: var(--card-bg);
-    padding: 16px 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+.task-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--success-color);
+    transition: all 0.25s ease;
 }
 
-.task-card:hover {
+.task-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.15);
 }
 
-.task-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+.task-item.completed {
+    border-left-color: #ccc;
+    background: #fafafa;
+    opacity: 0.85;
 }
 
-.task-checkbox {
-    width: 22px;
-    height: 22px;
-    border: 2px solid var(--border-color);
-    border-radius: 6px;
+.task-form {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-btn {
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: transform 0.2s;
+    font-size: 1.2em;
 }
 
-.task-checkbox.checked {
-    background: var(--success-color);
-    border-color: var(--success-color);
+.checkbox-btn:hover {
+    transform: scale(1.1);
 }
 
-.task-checkbox.checked::after {
-    content: '✓';
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
+.task-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
 .task-title {
-    font-size: 16px;
+    font-weight: 500;
     color: var(--text-main);
+    font-size: 15px;
 }
 
-.task-title.completed {
+.task-item.completed .task-title {
     text-decoration: line-through;
     color: var(--text-secondary);
 }
 
-.task-actions {
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.2s;
+.task-time {
+    font-size: 0.8em;
+    color: var(--text-secondary);
 }
 
-.task-card:hover .task-actions {
-    opacity: 1;
-}
-
-.task-btn {
-    padding: 8px 12px;
+.delete-btn {
+    background: none;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: all 0.2s;
+    font-size: 1.2em;
 }
 
-.task-btn.delete {
-    background: #fef2f2;
-    color: var(--error-color);
+.delete-btn:hover {
+    opacity: 1;
+    background: rgba(239, 68, 68, 0.1);
+    transform: scale(1.05);
 }
 
-.task-btn.delete:hover {
-    background: #fee2e2;
-}
-
-/* --- Стани (Loading, Empty) --- */
-.loading-state, .empty-state {
+/* --- Empty State --- */
+.empty-state {
     text-align: center;
     padding: 60px 20px;
     color: var(--text-secondary);
 }
 
-.empty-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
+/* ========================================== */
+/* === МОДАЛЬНЕ ВІКНО - ВИПРАВЛЕНО === */
+/* ========================================== */
+/* ========================================== */
+/* === МОДАЛЬНЕ ВІКНО === */
+/* ========================================== */
 
-.empty-state h3 {
-    font-size: 20px;
-    color: var(--text-main);
-    margin-bottom: 8px;
-}
-
-/* --- Модальне вікно --- */
 .modal-overlay {
     position: fixed;
-    inset: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    backdrop-filter: blur(4px);
 }
 
 .modal {
     background: var(--card-bg);
-    width: 100%;
+    width: 90%;
     max-width: 450px;
     padding: 32px;
     border-radius: var(--radius);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
 }
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-main);
     margin-bottom: 24px;
 }
 
-.modal-header h3 {
-    font-size: 20px;
-    font-weight: 600;
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.modal-close {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-secondary);
-}
-
-.modal-close:hover {
+.modal-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.2s;
+    background: var(--card-bg);
     color: var(--text-main);
 }
 
-.form-group {
-    margin-bottom: 24px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.form-group input:focus {
+.modal-input:focus {
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
-.form-actions {
+.modal-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
 
-.cancel-btn, .submit-btn {
-    padding: 12px 24px;
+.modal-cancel,
+.modal-save {
+    padding: 12px 28px;
+    border: none;
     border-radius: 8px;
     font-size: 15px;
     font-weight: 500;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
-.cancel-btn {
+.modal-cancel {
     background: var(--bg-color);
     color: var(--text-main);
-    border: none;
 }
 
-.cancel-btn:hover {
+.modal-cancel:hover {
     background: var(--border-color);
 }
 
-.submit-btn {
+.modal-save {
     background: var(--primary-color);
     color: white;
-    border: none;
 }
 
-.submit-btn:hover {
+.modal-save:hover {
     background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
+
+/* Адаптивність для модального вікна */
+@media (max-width: 480px) {
+    .modal-actions {
+        flex-direction: column;
+    }
+    .modal-cancel,
+    .modal-save {
+        width: 100%;
+    }
+}
+
+/* ========================================== */
+/* === КІНЕЦЬ МОДАЛЬНОГО ВІКНА === */
+/* ========================================== */
 
 /* --- Адаптивність --- */
 @media (max-width: 768px) {
@@ -419,10 +435,6 @@ body {
 
     .sidebar-nav {
         flex-direction: row;
-    }
-
-    .nav-btn span:not(.icon) {
-        display: none;
     }
 
     .sidebar-footer {
@@ -443,362 +455,30 @@ body {
         width: 100%;
         justify-content: center;
     }
-}
 
-/* 🎬 Проста анімація появи */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* 🧱 Стиль картки задачі (базовий) */
-.task-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px;
-    background: #fff;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-.task-content {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.task-title {
-    font-weight: 500;
-    color: #222;
-}
-
-.task-time {
-    font-size: 0.8em;
-    color: #888;
-}
-
-.delete-btn {
-    background: none;
-    border: none;
-    font-size: 1.3em;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.delete-btn:hover { opacity: 1; }
-
-/* 🎯 Модальне вікно - центровка */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal {
-    background: #fff;
-    padding: 24px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-/* 🎯 Центруємо контейнер з задачами */
-.tasks-container {
-    max-width: 600px;           /* не на всю ширину */
-    margin: 0 auto;             /* по центру */
-    padding: 10px;
-}
-
-/* 🧱 Картка задачі - покращений дизайн */
-.task-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    background: #fff;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    transition: all 0.25s ease;
-    border-left: 4px solid #4CAF50;  /* зелений акцент зліва */
-}
-
-.task-item:hover {
-    transform: translateY(-2px);  /* легкий підйом при наведенні */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-}
-
-/* ✅ Стиль для виконаної задачі */
-.task-item.completed {
-    border-left-color: #ccc;
-    background: #fafafa;
-    opacity: 0.85;
-}
-
-/* 📝 Заголовок задачі з анімацією закреслення */
-.task-title {
-    font-weight: 500;
-    color: #222;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-/* Закреслення для виконаної задачі */
-.task-item.completed .task-title {
-    text-decoration: none;  /* вимикаємо стандартне */
-    color: #888;
-}
-
-.task-item.completed .task-title::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 100%;
-    height: 2px;
-    background: #aaa;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: strike 0.3s ease forwards;
-}
-
-/* 🎬 Анімація "проведення лінії" */
-@keyframes strike {
-    to { transform: scaleX(1); }
-}
-
-/* 🕒 Час створення */
-.task-time {
-    font-size: 0.8em;
-    color: #999;
-    margin-top: 2px;
-}
-
-/* 🔘 Кнопки дій */
-.task-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.action-form {
-    margin: 0;
-    padding: 0;
-}
-
-.complete-btn,
-.delete-btn {
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 8px;
-    background: #f0f0f0;
-    font-size: 1.1em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.complete-btn:hover {
-    background: #4CAF50;
-    color: white;
-    transform: scale(1.05);
-}
-
-.delete-btn:hover {
-    background: #f44336;
-    color: white;
-    transform: scale(1.05);
-}
-
-/* 🎬 Анімація появи задачі */
-@keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(15px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
-}
-
-.animate-fade-in {
-    animation: fadeIn 0.35s ease-out;
-}
-
-/* 📱 Адаптивність для мобільних */
-@media (max-width: 480px) {
     .tasks-container {
         padding: 5px;
     }
+
     .task-item {
         padding: 14px 16px;
+    }
+
+    .modal {
+        padding: 24px;
+    }
+
+    .modal-buttons {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
     }
-    .task-actions {
-        align-self: flex-end;
+
+    .modal button[type="submit"],
+    .modal button[type="button"] {
+        width: 100%;
     }
 }
 
-.content-header {
-    max-width: 600px;
-    margin: 0 auto 20px;
-    padding: 0 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.add-task-btn {
-    padding: 10px 18px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.2s;
-}
-
-.add-task-btn:hover {
-    background: #45a049;
-}
-
-/* 📦 Контейнер задач — центровано */
-.tasks-container {
-    max-width: 650px;
-    margin: 0 auto;
-    padding: 10px;
-}
-
-/* 🧱 Картка задачі */
-.task-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 18px;
-    background: #1a1d23;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #2a2f3a;
-    transition: all 0.25s ease;
-}
-
-.task-item:hover {
-    border-color: #3a4050;
-    transform: translateX(4px);
-}
-
-/* ✅ Виконана задача */
-.task-item.completed {
-    opacity: 0.7;
-    background: #15181e;
-}
-
-/* 🔲 Чекбокс кнопка */
-.task-form {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-}
-
-.checkbox-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s;
-}
-
-.checkbox-btn:hover {
-    transform: scale(1.1);
-}
-
-.checkbox-empty {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #4a5060;
-    border-radius: 5px;
-    transition: all 0.2s;
-}
-
-.checkbox-btn:hover .checkbox-empty {
-    border-color: #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
-}
-
-/* 📝 Текст задачі */
-.task-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.task-title {
-    display: block;
-    font-weight: 500;
-    color: #e0e0e0;
-    font-size: 15px;
-    transition: all 0.3s;
-}
-
-/* Закреслення тексту */
-.task-title.strikethrough {
-    text-decoration: line-through;
-    color: #6a7080;
-}
-
-.task-time {
-    display: block;
-    font-size: 12px;
-    color: #6a7080;
-    margin-top: 3px;
-}
-
-/* 🗑️ Кнопка видалення */
-.delete-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.6;
-    transition: all 0.2s;
-}
-
-.delete-btn:hover {
-    opacity: 1;
-    background: rgba(244, 67, 54, 0.1);
-    transform: scale(1.05);
-}
-
-/* 🎬 Анімація появи */
+/* --- Анімації --- */
 @keyframes fadeIn {
     from { 
         opacity: 0; 
@@ -813,92 +493,3 @@ body {
 .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
 }
-
-/* 📱 Адаптивність */
-@media (max-width: 600px) {
-    .tasks-container {
-        padding: 5px;
-    }
-    .task-item {
-        padding: 14px 16px;
-    }
-}
-
-/* 📅 Групування по датах (для історії) */
-.date-group {
-    margin-bottom: 20px;
-}
-
-.date-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 16px 0 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #2a2f3a;
-}
-
-.date-badge {
-    background: #3a4050;
-    color: #ccc;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-/* 🗑️ Стиль для задач в історії */
-.task-item.archived {
-    background: #15181e;
-    border-left: 4px solid #666;
-    opacity: 0.7;
-}
-
-.task-item.archived .task-title {
-    color: #6a7080;
-}
-
-/* ✅ Закреслення тексту */
-.strikethrough {
-    text-decoration: line-through;
-    color: #6a7080;
-}
-
-/* 🎯 Підсвітка активної вкладки */
-.nav-btn.active {
-    background: #2a2f3a;
-    border-left: 3px solid #4CAF50;
-}
-
-/* 🔘 Кнопка видалити */
-.delete-btn {
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    font-size: 1.2em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.6;
-    transition: all 0.2s;
-}
-
-.delete-btn:hover {
-    opacity: 1;
-    background: rgba(244, 67, 54, 0.15);
-    transform: scale(1.1);
-}
-
-/*  Контейнер дій */
-.task-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.task-form {
-    margin: 0;
-    padding: 0;
-}   

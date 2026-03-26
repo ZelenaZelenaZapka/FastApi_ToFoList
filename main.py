@@ -1,29 +1,68 @@
-from fastapi import FastAPI, Request, Form, Cookie
+import os
+
+from fastapi import FastAPI, Request, Form, Cookie, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from datetime import datetime
 from passlib.context import CryptContext
-import json
-import os
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship, Session
+from typing import Optional
+from dotenv import load_dotenv
+
+# ==================== 🗄️ НАЛАШТУВАННЯ БАЗИ ДАНИХ ====================
+
+
+load_dotenv()
+
+# ⚠️ ЗАМІНИ ЦІ ДАНІ НА СВОЇ! (Формат: postgresql://user:password@localhost/dbname)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise ValueError("❌ DATABASE_URL не знайдено! Перевір файл .env")
+
+engine = create_engine(DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# ==================== 🏗️ МОДЕЛІ (ТАБЛИЦІ) ====================
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    created_at = Column(DateTime, default=datetime.now)
+    
+    # Зв'язок: у користувача багато задач
+    tasks = relationship("Task", back_populates="owner", cascade="all, delete-orphan")
+
+class Task(Base):
+    __tablename__ = "tasks"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    completed = Column(Boolean, default=False)
+    deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+    
+    # Зв'язок: задача належить користувачу
+    user_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates="tasks")
+
+# Створення таблиць при запуску (для простоти)
+Base.metadata.create_all(bind=engine)
+
+# ==================== 🚀 FASTAPI ДОДАТОК ====================
 
 app = FastAPI()
-
-# 📁 Статика та шаблони
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="template")
 
-# 🔐 Хешування
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# 📁 Абсолютні шляхи до файлів (щоб точно знайти)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TASKS_FILE = os.path.join(BASE_DIR, "tasks.json")
-USERS_FILE = os.path.join(BASE_DIR, "users.json")
-
-print(f"📁 BASE_DIR: {BASE_DIR}")
-print(f"📁 TASKS_FILE: {TASKS_FILE}")
-print(f"📁 USERS_FILE: {USERS_FILE}")
 
 # 🔐 Функції паролів
 def verify_password(plain, hashed):
@@ -32,250 +71,168 @@ def verify_password(plain, hashed):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-# 👥 Користувачі
-def load_users():
-    if not os.path.exists(USERS_FILE):
-        print("📭 users.json не знайдено, створюємо пустий список")
-        return {}
+# 🛠️ Залежність для отримання сесії БД
+def get_db():
+    db = SessionLocal()
     try:
-        with open(USERS_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            print(f"✅ Завантажено користувачів: {list(data.keys())}")
-            return data
-    except Exception as e:
-        print(f"❌ Помилка завантаження users.json: {e}")
-        return {}
+        yield db
+    finally:
+        db.close()
 
-def save_users(users_dict):
-    try:
-        with open(USERS_FILE, "w", encoding="utf-8") as f:
-            json.dump(users_dict, f, indent=2, ensure_ascii=False)
-        print(f"💾 Збережено користувачів: {list(users_dict.keys())}")
-        return True
-    except Exception as e:
-        print(f"❌ Помилка збереження users.json: {e}")
-        return False
+# 📧 Helper
+def get_nickname(email: str) -> str:
+    return email.split("@")[0] if "@" in email else email
 
-# 📋 Задачі
-def load_tasks(user_email=None):
-    if not os.path.exists(TASKS_FILE):
-        return []
-    try:
-        with open(TASKS_FILE, "r", encoding="utf-8") as f:
-            all_tasks = json.load(f)
-        if user_email:
-            filtered = [t for t in all_tasks if t.get("user") == user_email]
-            print(f"🔍 Задачі для {user_email}: {len(filtered)} шт.")
-            return filtered
-        return all_tasks
-    except Exception as e:
-        print(f"❌ Помилка завантаження tasks.json: {e}")
-        return []
-
-def save_tasks(tasks_list):
-    try:
-        with open(TASKS_FILE, "w", encoding="utf-8") as f:
-            json.dump(tasks_list, f, indent=2, ensure_ascii=False)
-        print(f"💾 Збережено задач: {len(tasks_list)} шт.")
-        return True
-    except Exception as e:
-        print(f"❌ Помилка збереження tasks.json: {e}")
-        return False
-
-# 🌍 Глобальні дані
-users = load_users()
-print(f"🚀 Сервер запущено. Користувачів у пам'яті: {len(users)}")
+# 🔍 Helper для отримання поточного користувача з БД по кукі
+def get_current_user(db, email: Optional[str]):
+    if not email:
+        return None
+    return db.query(User).filter(User.email == email).first()
 
 # ==================== 🌐 МАРШРУТИ ====================
 
 @app.get("/")
 async def login_page(request: Request, user: str = Cookie(None)):
-    print(f"🔍 GET / — user cookie: {user}")
     if user:
         return RedirectResponse(url="/home", status_code=303)
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.get("/home")
-async def home_page(request: Request, user: str = Cookie(None), view: str = "active"):
-    """Показує задачі: active = всі не видалені, history = тільки видалені"""
+async def home_page(request: Request, user: str = Cookie(None), view: str = "active", db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/", status_code=303)
     
-    all_tasks = load_tasks()
+    current_user = get_current_user(db, user)
+    if not current_user:
+        # Якщо кукі є, а користувача в БД немає (видалили адміном)
+        response = RedirectResponse(url="/", status_code=303)
+        response.delete_cookie(key="user")
+        return response
     
+    # Запит до БД замість фільтрації списку в пам'яті
     if view == "history":
-        # Історія = тільки видалені задачі цього користувача
-        user_tasks = [t for t in all_tasks if t.get("user") == user and t.get("deleted") == True]
-        # Сортуємо по даті видалення (новіші зверху)
-        user_tasks.sort(key=lambda x: x.get("deleted_at", ""), reverse=True)
+        tasks = db.query(Task).filter(
+            Task.user_id == current_user.id,
+            Task.deleted == True
+        ).order_by(Task.deleted_at.desc()).all()
     else:
-        # Активні = всі НЕ видалені (і завершені, і ні — показуємо разом)
-        user_tasks = [t for t in all_tasks if t.get("user") == user and t.get("deleted") != True]
-        # Сортуємо: спочатку незавершені, потім завершені
-        user_tasks.sort(key=lambda x: x.get("completed", False))
+        tasks = db.query(Task).filter(
+            Task.user_id == current_user.id,
+            Task.deleted == False
+        ).order_by(Task.completed.asc()).all()
     
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
-        "tasks": user_tasks,
+        "tasks": tasks,
         "user_email": user,
         "user_nickname": get_nickname(user),
         "current_view": view
     })
-
-@app.get("/logout")
-async def logout():
-    print("🚪 Вихід користувача")
-    response = RedirectResponse(url="/", status_code=303)
-    response.delete_cookie(key="user")
-    return response
 
 @app.post("/register")
 async def register(
     request: Request,
     email: str = Form(...),
     password: str = Form(...),
-    password2: str = Form(None)
+    password2: str = Form(None),
+    db: Session = Depends(get_db)
 ):
-    print(f"📝 POST /register — email: {email}, passwords match: {password == password2}")
-    
     if password != password2:
-        print("❌ Паролі не співпадають")
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Паролі не співпадають"
-        })
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Паролі не співпадають"})
     
     if len(password) < 6:
-        print("❌ Пароль занадто короткий")
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Пароль має містити мінімум 6 символів"
-        })
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Пароль має містити мінімум 6 символів"})
     
-    if email in users:
-        print(f"❌ Користувач {email} вже існує")
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Користувач з таким email вже існує"
-        })
+    # Перевірка чи існує користувач в БД
+    existing_user = db.query(User).filter(User.email == email).first()
+    if existing_user:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Користувач з таким email вже існує"})
     
-    # Створюємо користувача
-    users[email] = {
-        "password": get_password_hash(password),
-        "created_at": datetime.now().strftime("%Y-%m-%d")
-    }
-    print(f"✅ Створено користувача в пам'яті: {email}")
-    
-    # Зберігаємо на диск
-    if not save_users(users):
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Помилка збереження"
-        })
-    
-    # ✅ Редірект з кукі
-    print(f"🎯 Реєстрація успішна, ставимо кукі user={email}")
-    response = RedirectResponse(url="/home", status_code=303)
-    response.set_cookie(
-        key="user", 
-        value=email, 
-        max_age=7*24*60*60, 
-        httponly=True,
-        samesite="lax"
+    # Створення нового користувача
+    new_user = User(
+        email=email,
+        hashed_password=get_password_hash(password)
     )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    response = RedirectResponse(url="/home", status_code=303)
+    response.set_cookie(key="user", value=email, max_age=7*24*60*60, httponly=True, samesite="lax")
     return response
 
 @app.post("/login")
 async def login(
     request: Request,
     email: str = Form(...),
-    password: str = Form(...)
+    password: str = Form(...),
+    db: Session = Depends(get_db)
 ):
-    print(f"🔑 POST /login — email: {email}")
+    user = db.query(User).filter(User.email == email).first()
     
-    user_data = users.get(email)
-    print(f"🔍 Знайдено користувача в пам'яті: {user_data is not None}")
+    if not user or not verify_password(password, user.hashed_password):
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Невірний email або пароль"})
     
-    if not user_data:
-        print(f"❌ Користувач {email} не знайдено в users dict")
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Невірний email або пароль"
-        })
-    
-    if not verify_password(password, user_data["password"]):
-        print("❌ Невірний пароль")
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "error": "Невірний email або пароль"
-        })
-    
-    print(f"✅ Вхід успішний для {email}")
     response = RedirectResponse(url="/home", status_code=303)
-    response.set_cookie(
-        key="user", 
-        value=email, 
-        max_age=7*24*60*60, 
-        httponly=True,
-        samesite="lax"
-    )
+    response.set_cookie(key="user", value=email, max_age=7*24*60*60, httponly=True, samesite="lax")
     return response
 
 @app.get("/logout")
 async def logout():
-    print("🚪 Вихід користувача")
     response = RedirectResponse(url="/", status_code=303)
     response.delete_cookie(key="user")
     return response
 
 @app.post("/add-task")
-async def add_task(request: Request, title: str = Form(...), user: str = Cookie(None)):
+async def add_task(request: Request, title: str = Form(...), user: str = Cookie(None), db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/", status_code=303)
     
-    all_tasks = load_tasks()
-    new_id = len(all_tasks) + 1
+    current_user = get_current_user(db, user)
+    if not current_user:
+        return RedirectResponse(url="/", status_code=303)
     
-    all_tasks.append({
-        "id": new_id,
-        "title": title,
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "completed": False,
-        "deleted": False,  # ← нове поле
-        "user": user
-    })
-    save_tasks(all_tasks)
+    new_task = Task(
+        title=title,
+        user_id=current_user.id, # Прив'язуємо до ID користувача
+        created_at=datetime.now()
+    )
+    db.add(new_task)
+    db.commit()
+    
     return RedirectResponse(url="/home", status_code=303)
 
 @app.post("/toggle-task/{task_id}")
-async def toggle_task(task_id: int, request: Request, user: str = Cookie(None)):
-    """Просто позначити/зняти галочку — задача НЕ переміщується"""
+async def toggle_task(task_id: int, request: Request, user: str = Cookie(None), db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/", status_code=303)
     
-    all_tasks = load_tasks()
-    for task in all_tasks:
-        if task["id"] == task_id and task.get("user") == user:
-            task["completed"] = not task["completed"]  # просто перемикаємо
-            break
-    save_tasks(all_tasks)
-    return RedirectResponse(url="/home", status_code=303)  # залишаємось на активних
-
-@app.post("/delete-task/{task_id}")
-async def delete_task(task_id: int, request: Request, user: str = Cookie(None)):
-    """Видалити = позначити deleted=True → задача з'явиться в Історії"""
-    if not user:
+    current_user = get_current_user(db, user)
+    if not current_user:
         return RedirectResponse(url="/", status_code=303)
+        
+    task = db.query(Task).filter(Task.id == task_id, Task.user_id == current_user.id).first()
     
-    all_tasks = load_tasks()
-    for task in all_tasks:
-        if task["id"] == task_id and task.get("user") == user:
-            task["deleted"] = True
-            task["deleted_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
-            break
-    save_tasks(all_tasks)
+    if task:
+        task.completed = not task.completed
+        db.commit()
+        
     return RedirectResponse(url="/home", status_code=303)
 
-    # 📧 Отримати нікнейм з email (частина до @)
-def get_nickname(email: str) -> str:
-    return email.split("@")[0] if "@" in email else email
+@app.post("/delete-task/{task_id}")
+async def delete_task(task_id: int, request: Request, user: str = Cookie(None), db: Session = Depends(get_db)):
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    
+    current_user = get_current_user(db, user)
+    if not current_user:
+        return RedirectResponse(url="/", status_code=303)
+
+    task = db.query(Task).filter(Task.id == task_id, Task.user_id == current_user.id).first()
+    
+    if task:
+        task.deleted = True
+        task.deleted_at = datetime.now()
+        db.commit()
+        
+    return RedirectResponse(url="/home", status_code=303)
