@@ -20,18 +20,19 @@
     padding: 0;
 }
 
+/* ✅ ВИПРАВЛЕНО: Дозволяємо скрол */
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* --- Головний контейнер --- */
 .dashboard-container {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* --- Сайдбар --- */
@@ -42,6 +43,9 @@ body {
     display: flex;
     flex-direction: column;
     padding: 24px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
 }
 
 .sidebar-header {
@@ -90,6 +94,7 @@ body {
 .sidebar-footer {
     border-top: 1px solid var(--border-color);
     padding-top: 20px;
+    margin-top: auto; /* ✅ Push footer to bottom */
 }
 
 .user-info {
@@ -154,7 +159,8 @@ body {
 .main-content {
     flex: 1;
     padding: 40px;
-    overflow-y: auto;
+    overflow-y: auto; /* ✅ Дозволяємо скрол контенту */
+    height: 100vh;
 }
 
 .content-header {
@@ -300,12 +306,7 @@ body {
 }
 
 /* ========================================== */
-/* === МОДАЛЬНЕ ВІКНО - ВИПРАВЛЕНО === */
-/* ========================================== */
-/* ========================================== */
 /* === МОДАЛЬНЕ ВІКНО === */
-/* ========================================== */
-
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -405,7 +406,6 @@ body {
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
-/* Адаптивність для модального вікна */
 @media (max-width: 480px) {
     .modal-actions {
         flex-direction: column;
@@ -417,64 +417,114 @@ body {
 }
 
 /* ========================================== */
-/* === КІНЕЦЬ МОДАЛЬНОГО ВІКНА === */
+/* === АДАПТИВНІСТЬ - ВИПРАВЛЕНО === */
 /* ========================================== */
-
-/* --- Адаптивність --- */
 @media (max-width: 768px) {
     .dashboard-container {
         flex-direction: column;
     }
 
+    /* ✅ Сайдбар стає верхньою панеллю */
     .sidebar {
         width: 100%;
+        height: auto;
+        min-height: auto;
         border-right: none;
         border-bottom: 1px solid var(--border-color);
-        padding: 16px;
+        padding: 12px 16px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--card-bg);
     }
 
+    .sidebar-header {
+        margin-bottom: 16px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    /* ✅ Навігація вгорі */
     .sidebar-nav {
         flex-direction: row;
+        gap: 8px;
+        flex: 0;
     }
 
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    /* ✅ Footer (акаунт + вихід) внизу сайдбару */
     .sidebar-footer {
-        display: none;
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
+    .user-info {
+        margin-bottom: 0;
+        padding: 8px;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .user-name {
+        font-size: 13px;
+    }
+
+    .user-email {
+        font-size: 11px;
+    }
+
+    .logout-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    /* ✅ Контент скролиться */
     .main-content {
-        padding: 20px;
+        height: auto;
+        min-height: calc(100vh - 150px); /* Віднімаємо висоту сайдбару */
+        padding: 16px;
+        overflow-y: auto;
     }
 
     .content-header {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .content-header h2 {
+        font-size: 22px;
     }
 
     .add-task-btn {
         width: 100%;
         justify-content: center;
+        padding: 10px 16px;
     }
 
     .tasks-container {
-        padding: 5px;
+        padding: 0;
     }
 
     .task-item {
-        padding: 14px 16px;
-    }
-
-    .modal {
-        padding: 24px;
-    }
-
-    .modal-buttons {
-        flex-direction: column;
-    }
-
-    .modal button[type="submit"],
-    .modal button[type="button"] {
-        width: 100%;
+        padding: 12px 14px;
     }
 }
 
