@@ -1,15 +1,18 @@
 /* --- Змінні (Налаштування теми) --- */
 :root {
-    --primary-color: #4f46e5;       /* Індиго */
-    --primary-hover: #4338ca;       /* Темніший індиго */
-    --bg-color: #f3f4f6;            /* Світло-сірий фон */
-    --card-bg: #ffffff;             /* Біла картка */
-    --text-main: #111827;           /* Майже чорний текст */
-    --text-secondary: #6b7280;      /* Сірий текст */
-    --border-color: #d1d5db;        /* Колір рамок */
-    --error-color: #ef4444;         /* Червоний для помилок */
-    --radius: 12px;                 /* Закруглення кутів */
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    /* Кольори для темної теми */
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #1a1a1a;           /* Темний фон (як на скріншоті) */
+    --card-bg: #2d2d2d;            /* Темно-сірі карточки */
+    --text-main: #e5e7eb;          /* Світлий текст */
+    --text-secondary: #9ca3af;     /* Сірий текст */
+    --border-color: #404040;       /* Темні межі */
+    --error-color: #ef4444;
+    --success-color: #10b981;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --sidebar-width: 280px;
 }
 
 /* --- Базові налаштування --- */
