@@ -29,10 +29,10 @@ TEST_RESULT=$?
 # Виводимо результат
 echo -e "\n${YELLOW}════════════════════════════════════${NC}"
 if [ $TEST_RESULT -eq 0 ]; then
-    echo -e "${GREEN}✅ Всі тести пройшли успішно!${NC}"
+    echo -e "${GREEN}✅ Tests passed! Ready for deploy${NC}"
     echo -e "${GREEN}🚀 Готово до deploy на Render${NC}"
 else
-    echo -e "${RED}❌ Деякі тести не пройшли!${NC}"
+    echo -e "${RED}❌ Tests failed! Deploy blocked${NC}"
     echo -e "${RED}🛑 Виправ помилки перед deploy${NC}"
 fi
 echo -e "${YELLOW}════════════════════════════════════${NC}\n"
