@@ -70,11 +70,18 @@
     <!-- Модальне вікно -->
     <div class="modal-overlay" id="modalOverlay" style="display: none;">
         <div class="modal">
-            <h3>Нова задача</h3>
-            <form action="/add-task" method="post">
-                <input type="text" name="title" placeholder="Що зробити?" required>
-                <button type="submit">Зберегти</button>
-                <button type="button" onclick="document.getElementById('modalOverlay').style.display='none'">Скасувати</button>
+            <h3 class="modal-title">Нова задача</h3>
+            <form action="/add-task" method="post" class="modal-form">
+                <input 
+                    type="text" 
+                    name="title" 
+                    placeholder="Що зробити?" 
+                    class="modal-input"
+                    required>
+                <div class="modal-actions">
+                    <button type="button" class="modal-cancel" onclick="document.getElementById('modalOverlay').style.display='none'">Скасувати</button>
+                    <button type="submit" class="modal-save">Зберегти</button>
+                </div>
             </form>
         </div>
     </div>
