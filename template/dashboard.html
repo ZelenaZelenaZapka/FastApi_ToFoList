@@ -40,20 +40,17 @@
             <div class="tasks-container">
                 {% for task in tasks %}
                 <div class="task-item">
-                    <!-- Чекбокс -->
                     <form action="/toggle-task/{{ task.id }}" method="post" class="task-form">
                         <button type="submit" class="checkbox-btn">
                             {% if task.completed %}✅{% else %}⬜{% endif %}
                         </button>
                     </form>
                     
-                    <!-- Текст -->
                     <div class="task-content">
                         <span class="task-title">{{ task.title }}</span>
                         <span class="task-time">{{ task.created_at_formatted }}</span>
                     </div>
                     
-                    <!-- 🔥 КНОПКА ВИДАЛИТИ 🔥 -->
                     <form action="/delete-task/{{ task.id }}" method="post" class="task-form">
                         <button type="submit" class="delete-btn">🗑️</button>
                     </form>

@@ -125,7 +125,6 @@ async def home_page(
             Task.deleted == False
         ).order_by(Task.completed.asc()).all()
     
-    # ✅ Форматуємо дати
     for task in tasks:
         task.created_at_formatted = format_datetime(task.created_at)
         if task.deleted_at:

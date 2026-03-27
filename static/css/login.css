@@ -1,13 +1,12 @@
-/* --- Змінні (Налаштування теми) --- */
 :root {
     /* Кольори для темної теми */
     --primary-color: #4f46e5;
     --primary-hover: #4338ca;
-    --bg-color: #1a1a1a;           /* Темний фон (як на скріншоті) */
-    --card-bg: #2d2d2d;            /* Темно-сірі карточки */
-    --text-main: #e5e7eb;          /* Світлий текст */
-    --text-secondary: #9ca3af;     /* Сірий текст */
-    --border-color: #404040;       /* Темні межі */
+    --bg-color: #1a1a1a;           
+    --card-bg: #2d2d2d;            
+    --text-main: #e5e7eb;          
+    --text-secondary: #9ca3af;     
+    --border-color: #404040;       
     --error-color: #ef4444;
     --success-color: #10b981;
     --radius: 12px;
@@ -193,7 +192,7 @@ body {
         padding: 12px;
     }
     
-    /* Фіксуємо кнопки щоб не ховалися */
+    
     .logout-btn, .profile-btn {
         position: static !important;
         display: block !important;
@@ -210,13 +209,13 @@ body {
 body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Заборона горизонтального скролу */
+    overflow-x: hidden; 
 }
 
 @media (max-width: 768px) {
     html, body {
-        overflow-y: auto !important;  /* Примусовий скрол */
-        -webkit-overflow-scrolling: touch; /* Плавний скрол на iOS */
+        overflow-y: auto !important;  
+        -webkit-overflow-scrolling: touch; 
     }
     
     /* Якщо є фіксоване меню зверху */
@@ -226,18 +225,17 @@ body {
         z-index: 1000;
     }
     
-    /* Контент під меню */
     .main-content {
         margin-top: 10px;
-        padding-bottom: 50px; /* Щоб останній елемент не прилип до низу */
+        padding-bottom: 50px; 
     }
 }
 
 html, body {
-    height: auto;        /* Висота по контенту */
-    min-height: 100vh;   /* Мінімум на екран */
-    overflow-x: hidden;  /* Заборона горизонтального скролу */
-    overflow-y: auto;    /* Дозвіл вертикального скролу */
+    height: auto;        
+    min-height: 100vh;   
+    overflow-x: hidden;  
+    overflow-y: auto;    
     margin: 0;
     padding: 0;
 }

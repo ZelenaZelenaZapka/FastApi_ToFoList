@@ -16,19 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.textContent = '';
 
         try {
-            // --- ТУТ БУДЕ ЗАПИТ ДО FASTAPI ---
-            // Приклад того, як це буде виглядати потім:
-            /*
-            const response = await fetch('http://127.0.0.1:8000/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ username: email, password: password })
-            });
-            if (!response.ok) throw new Error('Невірний логін або пароль');
-            const data = await response.json();
-            localStorage.setItem('token', data.access_token);
-            window.location.href = 'dashboard.html'; // Перехід на головну
-            */
 
             // ІМІТАЦІЯ ЗАТРИМКИ (для тесту вигляду)
             await new Promise(r => setTimeout(r, 1000));
