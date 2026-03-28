@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Імпортуємо з main.py
-from main import app, Base, get_db, User, Task
+from main import app, get_db
+from app.database import Base
+from app.models import User, Task
 
 # ==================== 🗄️ ТЕСТОВА БД ====================
 
